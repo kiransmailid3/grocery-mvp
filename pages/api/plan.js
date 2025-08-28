@@ -1,52 +1,54 @@
-
-import shops from "../../shops.json";
-
+import fs from "fs";
+import path from "path";
 
 export default function handler(req, res) {
-if (req.method !== "POST") {
-return res.status(405).json({ error: "Only POST allowed" });
-}
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
+  const { items } = req.body;
+  if (!items || !Array.isArray(items)) {
+    return res.status(400).json({ error: "Items must be an array" });
+  }
 
-const { items } = req.body; // e.g. ["tomato","bread","milk"]
+  try {
+    // Load dummy shop data
+    const filePath = path.join(process.cwd(), "data", "shops.json");
+    const raw = fs.readFileSync(filePath, "utf8");
+    const shops = JSON.parse(raw);
 
+    let plan = [];
+    let grouped = {};
 
-if (!items || !Array.isArray(items) || items.length === 0) {
-return res.status(400).json({ error: "Please send items as a non-empty array" });
-}
+    items.forEach((item) => {
+      let cheapest = null;
+      let cheapestShop = null;
 
+      shops.forEach((shop) => {
+        if (shop.prices[item]) {
+          const price = shop.prices[item];
+          if (cheapest === null || price < cheapest) {
+            cheapest = price;
+            cheapestShop = shop.name;
+          }
+        }
+      });
 
-// Find cheapest shop per item
-const plan = items.map((raw) => {
-const item = String(raw).trim().toLowerCase();
-let cheapestShop = null;
-let cheapestPrice = Infinity;
+      if (cheapestShop) {
+        plan.push({ item, shop: cheapestShop, price: cheapest });
 
+        if (!grouped[cheapestShop]) {
+          grouped[cheapestShop] = { items: [], total: 0 };
+        }
+        grouped[cheapestShop].items.push({ item, price: cheapest });
+        grouped[cheapestShop].total += cheapest;
+      } else {
+        plan.push({ item, note: "Not available in any shop" });
+      }
+    });
 
-shops.forEach((shop) => {
-const price = shop.prices[item];
-if (typeof price === "number" && price < cheapestPrice) {
-cheapestPrice = price;
-cheapestShop = shop.name;
-}
-});
-
-
-return cheapestShop
-? { item, shop: cheapestShop, price: cheapestPrice }
-: { item, shop: null, price: null, note: "Not available" };
-});
-
-
-// Group by shop for convenience
-const grouped = plan.reduce((acc, row) => {
-const key = row.shop || "Unavailable";
-acc[key] = acc[key] || { items: [], total: 0 };
-acc[key].items.push({ item: row.item, price: row.price });
-if (row.price) acc[key].total += row.price;
-return acc;
-}, {});
-
-
-return res.status(200).json({ plan, grouped });
+    res.status(200).json({ plan, grouped });
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
 }
