@@ -1,0 +1,4 @@
+I want to create an app or website, where I want to get the groceries cheap from several grocery shops in my vicinity around 5km.
+The user can give their address or pin code.
+for example there are 5 items, like tomatoes, apples, bread, milk and cheese. I want an output such as pick tomatoes and cheese from grocery shop A, then apples from grocery shop B, bread and milk from grocery shop C.
+Also based on the address and the distance between the shops, the output from the app/website should show how to navigate, example, start from home to grocery shop B to grocery shop C to grocery shop C to home.
