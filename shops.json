@@ -1,0 +1,41 @@
+[
+{
+"name": "Shop A",
+"address": "Main Street 1",
+"lat": 59.334,
+"lng": 18.063,
+"prices": {
+"tomato": 2.5,
+"apple": 3.0,
+"bread": 1.5,
+"milk": 1.2,
+"cheese": 4.0
+}
+},
+{
+"name": "Shop B",
+"address": "Market Road 5",
+"lat": 59.329,
+"lng": 18.07,
+"prices": {
+"tomato": 2.0,
+"apple": 3.5,
+"bread": 1.6,
+"milk": 1.1,
+"cheese": 4.5
+}
+},
+{
+"name": "Shop C",
+"address": "Central Plaza 9",
+"lat": 59.331,
+"lng": 18.08,
+"prices": {
+"tomato": 2.2,
+"apple": 2.8,
+"bread": 1.4,
+"milk": 1.3,
+"cheese": 3.8
+}
+}
+]
